@@ -1,0 +1,399 @@
+        :root {
+            --primary-blue: #2e427a;
+            --secondary-blue: #3e68af;
+            --secondary-yellow: #FFC107;
+            --light-bg: #F5F7FA;
+            --text-dark: #1A1A1A;
+            --text-light: #666666;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-dark);
+            background-color: #fff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* BANNER SUPERIOR - SIN OVERLAY AZUL */
+        .festival-banner {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .festival-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 1;
+        }
+        
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .banner-content {
+            text-align: center;
+            color: white;
+            z-index: 2;
+            position: relative;
+        }
+        
+        .banner-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+        }
+        
+        .banner-content .date {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--secondary-yellow);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* SECCIÓN PRINCIPAL CON FONDO */
+        .concierto-container {
+            padding: 60px 20px;
+            background-image: url('../assets/images/festival/fondo-web.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        
+        /* Overlay semi-transparente para mejorar legibilidad */
+        .concierto-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.92);
+            z-index: 1;
+        }
+        
+        .concierto-container > .container {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-header h2 {
+            font-size: 2.5rem;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .section-header p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* GRID DE CARDS */
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            padding: 40px 0;
+        }
+        
+        .activity-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideInUp 0.6s ease-out;
+        }
+        
+        .activity-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            height: 8px;
+            background: linear-gradient(90deg, #0052CC, #003d99);
+        }
+        
+        .activity-card.card-1 .card-header {
+            background: linear-gradient(90deg, #0052CC, #003d99);
+        }
+        
+        .activity-card.card-2 .card-header {
+            background: linear-gradient(90deg, #9C27B0, #7B1FA2);
+        }
+        
+        .activity-card.card-3 .card-header {
+            background: linear-gradient(90deg, #2E7D32, #1B5E20);
+        }
+        
+        .activity-card.card-4 .card-header {
+            background: linear-gradient(90deg, #FF9800, #F57C00);
+        }
+        
+        .activity-card.card-5 .card-header {
+            background: linear-gradient(90deg, #FBC02D, #F57F17);
+        }
+        
+        .activity-card.card-6 .card-header {
+            background: linear-gradient(90deg, #D32F2F, #B71C1C);
+        }
+        
+        .card-icon {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+        }
+        
+        .card-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .card-time {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--secondary-blue);
+            margin-bottom: 12px;
+        }
+        
+        .card-description {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* SECCIÓN UBICACIÓN CON MAPA */
+        .ubicacion-section {
+            background: white;
+            padding: 60px 20px;
+        }
+        
+        .ubicacion-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .ubicacion-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .ubicacion-header h3 {
+            font-size: 2.2rem;
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+        
+        .ubicacion-header p {
+            font-size: 1rem;
+            color: var(--text-light);
+        }
+        
+        .mapa-container {
+            width: 100%;
+            height: 450px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            margin-bottom: 40px;
+        }
+        
+        .mapa-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .ubicacion-info {
+            text-align: center;
+            padding: 30px;
+            background: var(--light-bg);
+            border-radius: 15px;
+        }
+        
+        .ubicacion-info h4 {
+            font-size: 1.3rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .ubicacion-info p {
+            font-size: 1rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+        
+        /* SECCIÓN REGISTRO */
+        .registro-section {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, #003d99 100%);
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .registro-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .registro-section h3 {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        .registro-section p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+        
+        .registro-button {
+            display: inline-block;
+            background: var(--secondary-yellow);
+            color: var(--primary-blue);
+            padding: 20px 60px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            border: none;
+            cursor: pointer;
+        }
+        
+        .registro-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+            background: #FFD54F;
+        }
+        
+        .registro-button:active {
+            transform: translateY(-1px);
+        }
+        
+        .registro-footer {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-top: 30px;
+        }
+        
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .banner-content h1 {
+                font-size: 2rem;
+            }
+            
+            .banner-content .date {
+                font-size: 1.1rem;
+            }
+            
+            .activities-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .card-title {
+                font-size: 1.1rem;
+            }
+            
+            .card-icon {
+                height: 200px;
+            }
+            
+            .mapa-container {
+                height: 300px;
+            }
+            
+            .ubicacion-header h3 {
+                font-size: 1.8rem;
+            }
+            
+            .registro-section h3 {
+                font-size: 1.8rem;
+            }
+            
+            .registro-section p {
+                font-size: 1rem;
+            }
+            
+            .registro-button {
+                width: 100%;
+                padding: 15px 30px;
+                font-size: 1rem;
+            }
+            
+            .concierto-container {
+                background-attachment: scroll;
+            }
+        }
