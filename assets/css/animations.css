@@ -1,6 +1,15 @@
-/* ========================================
-   ANIMACIONES
-   ======================================== */
+/* ============================================================
+   FERIA ESCOLAR CAJASAN 2026 — animations.css
+   Animaciones reutilizables + reveal al hacer scroll
+   ============================================================ */
+
+/* ========== KEYFRAMES BÁSICOS ========== */
+
+/* Fade In */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
 
 /* Fade In Down */
 @keyframes fadeInDown {
@@ -12,10 +21,6 @@
         opacity: 1;
         transform: translateY(0);
     }
-}
-
-.animate-fadeInDown {
-    animation: fadeInDown 0.8s ease-out;
 }
 
 /* Fade In Up */
@@ -30,24 +35,6 @@
     }
 }
 
-.animate-fadeInUp {
-    animation: fadeInUp 0.8s ease-out 0.2s both;
-}
-
-/* Bounce */
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-20px);
-    }
-}
-
-.animate-bounce {
-    animation: bounce 2s infinite;
-}
-
 /* Slide In Left */
 @keyframes slideInLeft {
     from {
@@ -58,10 +45,6 @@
         opacity: 1;
         transform: translateX(0);
     }
-}
-
-.animate-slideInLeft {
-    animation: slideInLeft 0.6s ease-out;
 }
 
 /* Slide In Right */
@@ -76,15 +59,35 @@
     }
 }
 
-.animate-slideInRight {
-    animation: slideInRight 0.6s ease-out;
-}
-
-/* Slide In Up */
-@keyframes slideInUp {
+/* Slide In (notificaciones, desde la derecha) */
+@keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateY(50px);
+        transform: translateX(60px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Slide Out (notificaciones) */
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(60px);
+    }
+}
+
+/* Slide Down (modales) */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-40px);
     }
     to {
         opacity: 1;
@@ -92,29 +95,11 @@
     }
 }
 
-.animate-slideInUp {
-    animation: slideInUp 0.6s ease-out;
-}
-
-/* Pulse */
-@keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.5;
-    }
-}
-
-.animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
 /* Scale In */
 @keyframes scaleIn {
     from {
         opacity: 0;
-        transform: scale(0.95);
+        transform: scale(0.94);
     }
     to {
         opacity: 1;
@@ -122,65 +107,234 @@
     }
 }
 
-.animate-scaleIn {
-    animation: scaleIn 0.5s ease-out;
+/* Zoom suave (imágenes de fondo) */
+@keyframes kenBurns {
+    from { transform: scale(1); }
+    to { transform: scale(1.08); }
 }
 
-/* Rotate */
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.animate-rotate {
-    animation: rotate 2s linear infinite;
-}
-
-/* Glow */
-@keyframes glow {
-    0%, 100% {
-        box-shadow: 0 0 5px rgba(251, 191, 36, 0.5);
-    }
-    50% {
-        box-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
-    }
-}
-
-.animate-glow {
-    animation: glow 2s ease-in-out infinite;
-}
-
-/* Shake */
-@keyframes shake {
-    0%, 100% {
-        transform: translateX(0);
-    }
-    10%, 30%, 50%, 70%, 90% {
-        transform: translateX(-5px);
-    }
-    20%, 40%, 60%, 80% {
-        transform: translateX(5px);
-    }
-}
-
-.animate-shake {
-    animation: shake 0.5s ease-in-out;
+/* Bounce */
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
 }
 
 /* Float */
 @keyframes float {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
-.animate-float {
-    animation: float 3s ease-in-out infinite;
+/* Pulse */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* Pulse del contador del carrito */
+@keyframes cartPop {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.45); }
+    100% { transform: scale(1); }
+}
+
+/* Rotate (spinners) */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Shake (errores de formulario) */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+/* Shimmer (skeleton de carga) */
+@keyframes shimmer {
+    0% { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+}
+
+/* Línea de título creciendo */
+@keyframes lineGrow {
+    from { width: 0; }
+    to { width: 40px; }
+}
+
+/* ========== CLASES UTILITARIAS ========== */
+.animate-fadeIn        { animation: fadeIn 0.6s ease-out both; }
+.animate-fadeInDown    { animation: fadeInDown 0.8s ease-out both; }
+.animate-fadeInUp      { animation: fadeInUp 0.8s ease-out both; }
+.animate-slideInLeft   { animation: slideInLeft 0.6s ease-out both; }
+.animate-slideInRight  { animation: slideInRight 0.6s ease-out both; }
+.animate-scaleIn       { animation: scaleIn 0.5s ease-out both; }
+.animate-bounce        { animation: bounce 2s ease-in-out infinite; }
+.animate-float         { animation: float 3s ease-in-out infinite; }
+.animate-pulse         { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+.animate-rotate        { animation: rotate 1s linear infinite; }
+.animate-shake         { animation: shake 0.5s ease-in-out; }
+
+/* Retrasos escalonados (para grids) */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+.delay-6 { animation-delay: 0.6s; }
+
+/* ========== REVEAL AL HACER SCROLL ==========
+   Uso: agregar class="reveal" al elemento.
+   El JS (Paso 4) añade .visible cuando entra en pantalla
+   mediante IntersectionObserver.
+   ============================================== */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-right {
+    opacity: 0;
+    transform: translateX(40px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal-left.visible,
+.reveal-right.visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Escalonado automático dentro de grids */
+.grid-categorias .reveal:nth-child(1),
+.grid-productos .reveal:nth-child(1),
+.requisitos-grid .reveal:nth-child(1) { transition-delay: 0s; }
+
+.grid-categorias .reveal:nth-child(2),
+.grid-productos .reveal:nth-child(2),
+.requisitos-grid .reveal:nth-child(2) { transition-delay: 0.1s; }
+
+.grid-categorias .reveal:nth-child(3),
+.grid-productos .reveal:nth-child(3),
+.requisitos-grid .reveal:nth-child(3) { transition-delay: 0.2s; }
+
+.grid-categorias .reveal:nth-child(4),
+.grid-productos .reveal:nth-child(4) { transition-delay: 0.3s; }
+
+.grid-categorias .reveal:nth-child(n+5),
+.grid-productos .reveal:nth-child(n+5) { transition-delay: 0.4s; }
+
+/* ========== ANIMACIONES APLICADAS A COMPONENTES ========== */
+
+/* Banner principal: entrada suave + zoom lento */
+.hero-banner .banner-img {
+    animation: fadeIn 1s ease-out both, kenBurns 18s ease-out both;
+}
+
+/* Línea de los títulos crece al aparecer */
+.section-title.visible .title-line {
+    animation: lineGrow 0.6s ease-out both;
+}
+
+/* Contador del carrito "salta" al agregar producto */
+.cart-count.pop {
+    animation: cartPop 0.4s ease-out;
+}
+
+/* Notificaciones */
+.notificacion {
+    animation: slideIn 0.3s ease-out both;
+}
+
+.notificacion.saliendo {
+    animation: slideOut 0.3s ease-in both;
+}
+
+/* Modales */
+.modal {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    animation: slideDown 0.35s ease-out;
+}
+
+/* Botón volver arriba: flotación sutil cuando es visible */
+.back-to-top.visible svg {
+    animation: float 2.5s ease-in-out infinite;
+}
+
+/* Error en inputs de formulario */
+input.error {
+    border-color: var(--accent-orange) !important;
+    animation: shake 0.4s ease-in-out;
+}
+
+/* ========== SKELETON DE CARGA ========== */
+.skeleton {
+    background: linear-gradient(90deg, #efefef 25%, #f8f8f8 50%, #efefef 75%);
+    background-size: 1200px 100%;
+    animation: shimmer 1.4s linear infinite;
+}
+
+.skeleton-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.skeleton-img {
+    width: 100%;
+    height: 280px;
+}
+
+.skeleton-line {
+    height: 12px;
+    width: 100%;
+}
+
+.skeleton-line.short {
+    width: 60%;
+}
+
+/* ========== SPINNER ========== */
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent-orange);
+    border-radius: 50%;
+    margin: 40px auto;
+    animation: rotate 0.8s linear infinite;
+}
+
+/* ========== ACCESIBILIDAD ========== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .reveal,
+    .reveal-left,
+    .reveal-right {
+        opacity: 1;
+        transform: none;
+    }
 }

@@ -1,0 +1,1 @@
+[02-Oct-2026 19:31:55 UTC] Error en API [crearPedido]: Unknown column 'nombre_completo' in 'field list' en C:\wamp64\www\feria-escolar\models\Model.php:423

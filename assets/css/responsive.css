@@ -1,66 +1,662 @@
-/* Tablets */
-@media (max-width: 768px) {
-    .hero {
-        grid-template-columns: 1fr;
-        padding: 2rem 0;
+/* ============================================================
+   FERIA ESCOLAR CAJASAN 2026 — responsive.css
+   Complementa los breakpoints base de styles.css
+   (1024px / 768px / 640px ya están definidos allí)
+   ============================================================ */
+
+/* ========== PANTALLAS GRANDES (≥ 1400px) ========== */
+@media (min-width: 1400px) {
+    :root {
+        --container: 1320px;
     }
-    
-    .hero-title {
-        font-size: 2.5rem;
+
+    .section {
+        padding: 100px 0;
     }
-    
-    .countdown-timer {
-        grid-template-columns: repeat(2, 1fr);
+
+    .promo-tile-lg {
+        height: 340px;
     }
-    
-    .nav-menu {
-        display: none;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        right: 0;
-        background: var(--primary-color);
-        flex-direction: column;
-        padding: 1rem;
+
+    .promo-tile-sm {
+        height: 250px;
     }
-    
-    .nav-menu.active {
-        display: flex;
+
+    .producto-imagen,
+    .categoria-imagen {
+        height: 300px;
     }
-    
-    .hamburger {
-        display: flex;
+
+    .cta-content h2 {
+        font-size: 56px;
     }
 }
 
-/* Móviles */
-@media (max-width: 480px) {
-    .hero-title {
-        font-size: 1.8rem;
+/* ========== PORTÁTILES PEQUEÑOS (1025px – 1200px) ========== */
+@media (min-width: 1025px) and (max-width: 1200px) {
+    .nav-menu {
+        gap: 24px;
     }
-    
-    .hero-buttons {
+
+    .nav-link {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .grid-productos,
+    .grid-categorias {
+        gap: 20px;
+    }
+
+    .producto-imagen,
+    .categoria-imagen {
+        height: 240px;
+    }
+
+    .beneficios-grid {
+        gap: 25px;
+    }
+}
+
+/* ========== TABLETS (769px – 1024px) ========== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .navbar-inner {
+        height: 72px;
+    }
+
+    .brand-text {
+        font-size: 19px;
+    }
+
+    .nav-menu {
+        gap: 20px;
+    }
+
+    .nav-link {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .promo-tile-lg {
+        height: 240px;
+    }
+
+    .promo-tile-sm {
+        height: 190px;
+    }
+
+    .promo-tile-content h3 {
+        font-size: 22px;
+    }
+
+    .promo-tile-sm .promo-tile-content h3 {
+        font-size: 17px;
+    }
+
+    .requisitos-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .requisito-imagen {
+        height: 180px;
+    }
+
+    .requisito-body {
+        padding: 22px 18px 24px;
+    }
+
+    .producto-imagen,
+    .categoria-imagen {
+        height: 220px;
+    }
+
+    .filtro-select {
+        min-width: 180px;
+    }
+
+    .beneficio {
         flex-direction: column;
+        text-align: center;
+        align-items: center;
     }
-    
-    .btn {
+
+    .footer-content {
+        gap: 30px;
+    }
+}
+
+/* ========== TABLET HORIZONTAL / ORIENTACIÓN ========== */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+    .hero-banner {
+        aspect-ratio: 1920 / 676;
+    }
+
+    .cta-banner {
+        padding: 80px 0;
+    }
+}
+
+/* ========== MÓVILES (≤ 768px) — AJUSTES EXTRA ========== */
+@media (max-width: 768px) {
+    /* Barra superior: permite dos líneas sin cortar */
+    .top-bar {
+        padding: 8px 0;
+    }
+
+    .top-bar p {
+        line-height: 1.5;
+    }
+
+    /* Menú desplegable: mejora táctil */
+    .nav-menu.active {
+        max-height: 420px;
+    }
+
+    .nav-link {
+        font-size: 13px;
+    }
+
+    /* Iconos un poco más grandes para el dedo */
+    .nav-icon-btn {
+        width: 42px;
+        height: 42px;
+    }
+
+    .nav-icon-btn svg {
+        width: 22px;
+        height: 22px;
+    }
+
+    /* Búsqueda */
+    .search-bar input {
+        font-size: 16px; /* evita el zoom automático de iOS */
+    }
+
+    /* Títulos */
+    .section-title {
+        margin-bottom: 35px;
+    }
+
+    /* Mosaico: texto más compacto */
+    .promo-tile-content h3 {
+        font-size: 20px;
+    }
+
+    .promo-tile-sm .promo-tile-content h3 {
+        font-size: 16px;
+    }
+
+    .promo-tile-content span {
+        font-size: 9px;
+        padding: 5px 12px;
+    }
+
+    /* Requisitos */
+    .requisito-imagen {
+        height: 200px;
+    }
+
+    /* Filtros: etiquetas visibles y selects anchos */
+    .filtros {
+        padding: 20px 15px;
+        gap: 15px;
+    }
+
+    .filtro-group {
+        flex: 1 1 45%;
+    }
+
+    .filtro-select {
+        min-width: 0;
         width: 100%;
     }
-    
-    .countdown-timer {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.5rem;
+
+    .btn-outline {
+        flex: 1 1 100%;
     }
-    
-    .countdown-item {
-        padding: 1rem;
+
+    /* Productos: botón más alto para el dedo */
+    .btn-agregar {
+        padding: 14px;
     }
-    
-    .countdown-value {
-        font-size: 1.8rem;
+
+    /* CTA */
+    .cta-content p {
+        font-size: 14px;
     }
-    
-    .promociones-grid {
-        grid-template-columns: 1fr;
+
+    /* Marcas */
+    .marcas-grid {
+        gap: 35px;
+    }
+
+    .marca-logo {
+        height: 40px;
+    }
+
+    .marca-logo img {
+        max-height: 40px;
+        max-width: 110px;
+    }
+
+    .marca-logo span {
+        font-size: 16px;
+    }
+
+    /* Newsletter */
+    .newsletter {
+        padding: 40px 0;
+    }
+
+    .newsletter-form input {
+        font-size: 16px;
+    }
+
+    /* Footer */
+    .footer {
+        padding-top: 45px;
+    }
+
+    .footer-brand {
+        padding-bottom: 30px;
+        margin-bottom: 35px;
+    }
+
+    .footer-brand h3 {
+        font-size: 15px;
+        letter-spacing: 2px;
+    }
+
+    .footer-bottom {
+        font-size: 11px;
+        line-height: 1.7;
+        padding: 18px 10px;
+    }
+
+    /* Modal carrito: tabla compacta */
+    .modal-content.modal-lg {
+        padding: 25px 15px;
+    }
+
+    .carrito-tabla {
+        font-size: 12px;
+    }
+
+    .carrito-tabla th,
+    .carrito-tabla td {
+        padding: 10px 6px;
+    }
+
+    .carrito-tabla .carrito-producto img {
+        width: 44px;
+        height: 44px;
+    }
+
+    .carrito-tabla input[type="number"] {
+        width: 50px;
+    }
+
+    .carrito-total {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+
+    .carrito-total .btn-principal {
+        width: 100%;
+    }
+
+    /* Notificaciones: ancho completo */
+    .notificacion {
+        top: auto;
+        bottom: 80px;
+        left: 15px;
+        right: 15px;
+        text-align: center;
+    }
+}
+
+/* ========== MÓVILES PEQUEÑOS (≤ 480px) ========== */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+
+    .section {
+        padding: 45px 0;
+    }
+
+    /* Top bar más corta */
+    .top-bar p {
+        font-size: 9px;
+        letter-spacing: 0.5px;
+    }
+
+    /* Header */
+    .navbar-inner {
+        height: 64px;
+    }
+
+    .logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .brand-text {
+        font-size: 16px;
+    }
+
+    .nav-actions {
+        gap: 2px;
+    }
+
+    /* Banner */
+    .hero-banner {
+        aspect-ratio: 1 / 1;
+    }
+
+    /* Mosaico */
+    .promo-tiles {
+        padding-top: 15px;
+    }
+
+    .promo-tile-lg,
+    .promo-tile-sm {
+        height: 170px;
+    }
+
+    /* Títulos */
+    .section-title h2 {
+        font-size: 16px;
+        letter-spacing: 1.5px;
+    }
+
+    /* Requisitos */
+    .requisito-imagen {
+        height: 180px;
+    }
+
+    .requisito-body {
+        padding: 22px 18px 24px;
+    }
+
+    .requisito-body li {
+        font-size: 13px;
+    }
+
+    /* Categorías y productos a una columna */
+    .categoria-imagen,
+    .producto-imagen {
+        height: 260px;
+    }
+
+    .producto-info h3 {
+        font-size: 13px;
+    }
+
+    .producto-precio {
+        font-size: 17px;
+    }
+
+    /* Beneficios */
+    .beneficios {
+        padding: 45px 0;
+    }
+
+    .beneficio {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+        gap: 12px;
+    }
+
+    /* CTA */
+    .cta-banner {
+        padding: 70px 0;
+    }
+
+    .cta-content small {
+        font-size: 10px;
+        letter-spacing: 2px;
+    }
+
+    .cta-content h2 {
+        font-size: 26px;
+    }
+
+    .btn-principal {
+        padding: 13px 28px;
+        font-size: 12px;
+    }
+
+    /* Newsletter en columna */
+    .newsletter-form {
+        flex-direction: column;
+    }
+
+    .newsletter-form input {
+        border-right: 1px solid rgba(255, 255, 255, 0.2);
+        border-bottom: none;
+        text-align: center;
+    }
+
+    .newsletter-form button {
+        padding: 14px;
+    }
+
+    /* Modales a pantalla casi completa */
+    .modal-content {
+        width: 94%;
+        margin: 10% auto;
+        padding: 30px 18px;
+    }
+
+    .modal-content h2 {
+        font-size: 15px;
+    }
+
+    .close {
+        top: 10px;
+        right: 14px;
+    }
+
+    /* Carrito: ocultamos columna "Precio" (ya está en subtotal) */
+    .carrito-tabla th:nth-child(2),
+    .carrito-tabla td:nth-child(2) {
+        display: none;
+    }
+
+    .carrito-tabla .carrito-producto {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    /* Volver arriba más discreto */
+    .back-to-top {
+        bottom: 15px;
+        right: 15px;
+        width: 38px;
+        height: 38px;
+    }
+
+    .back-to-top svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+/* ========== MÓVILES MUY PEQUEÑOS (≤ 360px) ========== */
+@media (max-width: 360px) {
+    .brand-text {
+        display: none; /* queda solo el logo */
+    }
+
+    .top-bar strong {
+        display: block;
+    }
+
+    .promo-tile-content h3 {
+        font-size: 17px;
+    }
+
+    .categoria-imagen,
+    .producto-imagen {
+        height: 220px;
+    }
+
+    .filtro-group {
+        flex: 1 1 100%;
+    }
+}
+
+/* ========== MÓVIL EN HORIZONTAL ========== */
+@media (max-width: 900px) and (orientation: landscape) and (max-height: 500px) {
+    .hero-banner {
+        aspect-ratio: 1920 / 676;
+    }
+
+    .nav-menu.active {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+
+    .modal-content {
+        margin: 3% auto;
+        max-height: 92vh;
+        overflow-y: auto;
+    }
+
+    .cta-banner {
+        padding: 50px 0;
+    }
+}
+
+/* ========== DISPOSITIVOS TÁCTILES ========== */
+@media (hover: none) and (pointer: coarse) {
+    /* Sin efectos hover que requieran mouse */
+    .categoria-card:hover .categoria-imagen img,
+    .producto-card:hover .producto-imagen img,
+    .promo-tile:hover img,
+    .requisito-card:hover .requisito-imagen img {
+        transform: none;
+    }
+
+    .requisito-card:hover,
+    .categoria-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Overlay de categorías siempre sutil para indicar que es clicable */
+    .categoria-overlay {
+        opacity: 0;
+    }
+
+    .promo-tile img {
+        opacity: 0.75;
+    }
+
+    .promo-tile-content span {
+        background: var(--accent-orange);
+        border-color: var(--accent-orange);
+    }
+
+    /* Logos de marcas a color en táctil (no hay hover) */
+    .marca-logo {
+        filter: grayscale(0);
+        opacity: 0.9;
+    }
+
+    /* Áreas táctiles mínimas de 44px */
+    .nav-icon-btn,
+    .carrito-eliminar,
+    .search-close,
+    .close {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* ========== PANTALLAS DE ALTA DENSIDAD ========== */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .title-line,
+    .nav-link::after,
+    .requisito-body h3::after {
+        /* Líneas finas se ven más nítidas */
+        transform: translateZ(0);
+    }
+}
+
+/* ========== IMPRESIÓN ========== */
+@media print {
+    .top-bar,
+    .navbar,
+    .promo-tiles,
+    .beneficios,
+    .cta-banner,
+    .newsletter,
+    .filtros,
+    .btn-agregar,
+    .back-to-top,
+    .modal,
+    .notificacion,
+    .social-links {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+        color: #000;
+        font-size: 12pt;
+    }
+
+    .section {
+        padding: 20px 0;
+        page-break-inside: avoid;
+    }
+
+    .hero-banner {
+        aspect-ratio: auto;
+        max-height: 200px;
+    }
+
+    .grid-productos,
+    .grid-categorias {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+
+    .producto-imagen,
+    .categoria-imagen {
+        height: 150px;
+    }
+
+    .reveal,
+    .reveal-left,
+    .reveal-right {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    .footer {
+        background: none;
+        color: #000;
+        border-top: 1px solid #000;
+    }
+
+    .footer-section p,
+    .footer-section a,
+    .footer-bottom {
+        color: #000;
+    }
+
+    a[href^="http"]::after {
+        content: " (" attr(href) ")";
+        font-size: 10pt;
     }
 }

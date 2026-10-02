@@ -626,36 +626,14 @@ function suscribirNewsletter(e) {
 }
 
 // ========== UTILIDADES ==========
-/*
-    function mostrarNotificacion(mensaje, duracion = 3000) {
-        document.querySelectorAll('.notificacion').forEach(n => n.remove());
-        const notif = document.createElement('div');
-        notif.className = 'notificacion';
-        notif.textContent = mensaje;
-        document.body.appendChild(notif);
-        setTimeout(() => {
-            notif.classList.add('saliendo');
-            notif.addEventListener('animationend', () => notif.remove(), { once: true });
-        }, duracion);
-    }
-*/
-
-function mostrarNotificacion(mensaje, duracion = 3000, enlace = null) {
+function mostrarNotificacion(mensaje, duracion = 3000) {
     document.querySelectorAll('.notificacion').forEach(n => n.remove());
 
     const notif = document.createElement('div');
     notif.className = 'notificacion';
     notif.textContent = mensaje;
-
-    if (enlace) {
-        const a = document.createElement('a');
-        a.href = enlace.url;
-        a.textContent = enlace.texto;
-        a.style.cssText = 'color:#ff6a00;font-weight:700;margin-left:12px;text-decoration:underline;';
-        notif.appendChild(a);
-    }
-
     document.body.appendChild(notif);
+
     setTimeout(() => {
         notif.classList.add('saliendo');
         notif.addEventListener('animationend', () => notif.remove(), { once: true });

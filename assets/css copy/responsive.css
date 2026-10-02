@@ -1,0 +1,66 @@
+/* Tablets */
+@media (max-width: 768px) {
+    .hero {
+        grid-template-columns: 1fr;
+        padding: 2rem 0;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .countdown-timer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: var(--primary-color);
+        flex-direction: column;
+        padding: 1rem;
+    }
+    
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    .hamburger {
+        display: flex;
+    }
+}
+
+/* Móviles */
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    .countdown-timer {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .countdown-item {
+        padding: 1rem;
+    }
+    
+    .countdown-value {
+        font-size: 1.8rem;
+    }
+    
+    .promociones-grid {
+        grid-template-columns: 1fr;
+    }
+}

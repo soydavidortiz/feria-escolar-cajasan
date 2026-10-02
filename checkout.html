@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Finaliza tu pedido de la Feria Escolar Cajasan 2026.">
+    <meta name="robots" content="noindex, follow">
+    <title>Finalizar Pedido - Feria Escolar Cajasan 2026</title>
+    <link rel="icon" type="image/png" href="assets/img/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <link rel="stylesheet" href="assets/css/checkout.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+</head>
+<body class="page-checkout">
+    <!-- ========== BARRA SUPERIOR ========== -->
+    <div class="top-bar">
+        <div class="container">
+            <p>RECLAMA TU KIT ESCOLAR HASTA EL <strong>28 DE FEBRERO</strong> &nbsp;—&nbsp; DESCUENTOS ESPECIALES PARA BENEFICIARIOS CAJASAN</p>
+        </div>
+    </div>
+    <!-- ========== HEADER ========== -->
+    <header class="navbar" id="navbar">
+        <div class="container navbar-inner">
+            <div class="navbar-brand">
+                <a href="index.html" class="logo-link">
+                    <img src="assets/img/favicon.png" alt="Cajasan" class="logo">
+                    <span class="brand-text">FERIA <span>ESCOLAR</span></span>
+                </a>
+            </div>
+            <nav class="nav-menu" id="nav-menu">
+                <a href="index.html#inicio" class="nav-link">Inicio</a>
+                <a href="index.html#requisitos" class="nav-link">Requisitos</a>
+                <a href="index.html#categorias" class="nav-link">Categorías</a>
+                <a href="index.html#productos" class="nav-link">Productos</a>
+                <a href="index.html#contacto" class="nav-link">Contacto</a>
+            </nav>
+            <div class="nav-actions">
+                <a href="index.html#productos" class="nav-icon-btn cart-btn" title="Seguir comprando">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                    </svg>
+                    <span class="cart-count" id="contador-carrito">0</span>
+                </a>
+                <button class="hamburger" id="hamburger" aria-label="Menú de navegación">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+    <!-- ========== ENCABEZADO DE PÁGINA ========== -->
+    <section class="page-header">
+        <div class="container page-header-inner">
+            <h1>Finalizar Pedido</h1>
+            <nav class="breadcrumb" aria-label="Ruta">
+                <a href="index.html">Inicio</a>
+                <span>/</span>
+                <a href="index.html#productos">Productos</a>
+                <span>/</span>
+                <strong>Finalizar pedido</strong>
+            </nav>
+        </div>
+    </section>
+    <!-- ========== CONTENIDO CHECKOUT ========== -->
+    <main class="checkout section">
+        <div class="container">
+            <!-- Pasos -->
+            <ol class="checkout-steps">
+                <li class="done"><span>1</span> Carrito</li>
+                <li class="current"><span>2</span> Datos del pedido</li>
+                <li><span>3</span> Confirmación</li>
+            </ol>
+            <!-- Carrito vacío -->
+            <div class="checkout-empty" id="checkout-empty" hidden>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                <h2>Tu carrito está vacío</h2>
+                <p>Agrega productos desde el catálogo para continuar con tu pedido.</p>
+                <a href="index.html#productos" class="btn-principal">Ir al catálogo</a>
+            </div>
+            <!-- Formulario de checkout -->
+            <div id="checkout-wrapper">
+                <!-- Avisos -->
+                <div class="checkout-notice">
+                    <p>¿Ya tienes una cuenta? <a href="#" id="toggle-login">Haz clic aquí para ingresar</a></p>
+                    <form class="notice-form" id="form-login-inline" hidden>
+                        <input type="email" id="login-email" placeholder="Correo electrónico" required>
+                        <input type="password" id="login-pass" placeholder="Contraseña" required>
+                        <button type="submit" class="btn-principal btn-sm">Ingresar</button>
+                    </form>
+                </div>
+                <div class="checkout-notice checkout-notice-success" id="notice-usuario" hidden>
+                    <p>Sesión iniciada como <strong id="notice-usuario-nombre"></strong>. <a href="#" id="cerrar-sesion">Cerrar sesión</a></p>
+                </div>
+                <form id="form-checkout" class="checkout-grid" novalidate>
+                    <!-- ===== COLUMNA IZQUIERDA: DATOS ===== -->
+                    <div class="checkout-col">
+                        <h2 class="checkout-title">Datos del afiliado</h2>
+                        <div class="form-row form-row-2">
+                            <div class="form-group">
+                                <label for="nombres">Nombres <abbr title="obligatorio">*</abbr></label>
+                                <input type="text" id="nombres" name="nombres" required autocomplete="given-name">
+                            </div>
+                            <div class="form-group">
+                                <label for="apellidos">Apellidos <abbr title="obligatorio">*</abbr></label>
+                                <input type="text" id="apellidos" name="apellidos" required autocomplete="family-name">
+                            </div>
+                        </div>
+                        <div class="form-row form-row-2">
+                            <div class="form-group form-group-sm">
+                                <label for="tipo-documento">Tipo de documento <abbr title="obligatorio">*</abbr></label>
+                                <select id="tipo-documento" name="tipo_documento" required>
+                                    <option value="CC">Cédula de ciudadanía</option>
+                                    <option value="CE">Cédula de extranjería</option>
+                                    <option value="PPT">Permiso por protección temporal</option>
+                                    <option value="PA">Pasaporte</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="documento">Número de documento <abbr title="obligatorio">*</abbr></label>
+                                <input type="text" id="documento" name="documento" required inputmode="numeric" maxlength="20">
+                            </div>
+                        </div>
+                        <div class="form-row form-row-2">
+                            <div class="form-group">
+                                <label for="email">Correo electrónico <abbr title="obligatorio">*</abbr></label>
+                                <input type="email" id="email" name="email" required autocomplete="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="telefono">Teléfono / Celular <abbr title="obligatorio">*</abbr></label>
+                                <input type="tel" id="telefono" name="telefono" required inputmode="tel" autocomplete="tel" placeholder="300 000 0000">
+                            </div>
+                        </div>
+                        <div class="form-row form-row-2">
+                            <div class="form-group">
+                                <label for="departamento">Departamento <abbr title="obligatorio">*</abbr></label>
+                                <select id="departamento" name="departamento" required>
+                                    <option value="Santander" selected>Santander</option>
+                                    <option value="Norte de Santander">Norte de Santander</option>
+                                    <option value="Boyacá">Boyacá</option>
+                                    <option value="Cesar">Cesar</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="ciudad">Ciudad / Municipio <abbr title="obligatorio">*</abbr></label>
+                                <input type="text" id="ciudad" name="ciudad" required placeholder="Bucaramanga" autocomplete="address-level2">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="direccion">Dirección de residencia <abbr title="obligatorio">*</abbr></label>
+                            <input type="text" id="direccion" name="direccion" required placeholder="Calle / Carrera, número, barrio" autocomplete="street-address">
+                        </div>
+                        <div class="form-group">
+                            <label for="punto-entrega">Punto de entrega (CIS o Parque Cajasan) <abbr title="obligatorio">*</abbr></label>
+                            <select id="punto-entrega" name="punto_entrega" required>
+                                <option value="">Selecciona dónde reclamarás el kit…</option>
+                                <option value="CIS Bucaramanga - Sede Principal">CIS Bucaramanga - Sede Principal</option>
+                                <option value="CIS Floridablanca">CIS Floridablanca</option>
+                                <option value="CIS Girón">CIS Girón</option>
+                                <option value="CIS Piedecuesta">CIS Piedecuesta</option>
+                                <option value="CIS Barrancabermeja">CIS Barrancabermeja</option>
+                                <option value="CIS San Gil">CIS San Gil</option>
+                                <option value="CIS Socorro">CIS Socorro</option>
+                                <option value="Parque Recreacional Cajasan">Parque Recreacional Cajasan</option>
+                            </select>
+                        </div>
+                        <!-- Crear cuenta -->
+                        <div class="form-check" id="bloque-crear-cuenta">
+                            <label>
+                                <input type="checkbox" id="crear-cuenta" name="crear_cuenta">
+                                <span>¿Crear una cuenta para seguir mis pedidos?</span>
+                            </label>
+                        </div>
+                        <div class="form-group" id="bloque-password" hidden>
+                            <label for="password">Contraseña para tu cuenta <abbr title="obligatorio">*</abbr></label>
+                            <input type="password" id="password" name="password" minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres">
+                        </div>
+                    </div>
+                    <!-- ===== COLUMNA DERECHA: ADICIONAL ===== -->
+                    <div class="checkout-col">
+                        <h2 class="checkout-title">Información adicional</h2>
+                        <div class="form-group">
+                            <label for="notas">Notas del pedido (opcional)</label>
+                            <textarea id="notas" name="notas" rows="6" placeholder="Ej: nombre del beneficiario, grado escolar, indicaciones para la entrega…"></textarea>
+                        </div>
+                        <div class="checkout-info-box">
+                            <h4>¿Cómo funciona la entrega?</h4>
+                            <ul>
+                                <li>Al confirmar, tu pedido queda en estado <strong>pendiente</strong>.</li>
+                                <li>Te contactaremos al correo o celular registrado.</li>
+                                <li>Reclamas y pagas en el <strong>CIS o Parque</strong> seleccionado.</li>
+                                <li>Plazo máximo: <strong>28 de febrero de 2026</strong>.</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- ===== RESUMEN DEL PEDIDO (ancho completo) ===== -->
+                    <div class="checkout-full">
+                        <h2 class="checkout-title">Tu pedido</h2>
+                        <table class="order-table">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="order-items">
+                                <!-- Se llena con JavaScript -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="2">Subtotal</th>
+                                    <td class="text-right">$<span id="order-subtotal">0</span></td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">Descuento beneficiario</th>
+                                    <td class="text-right">$<span id="order-descuento">0</span></td>
+                                </tr>
+                                <tr class="order-total">
+                                    <th colspan="2">Total</th>
+                                    <td class="text-right">$<span id="order-total">0</span></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <!-- Método de pago -->
+                        <div class="payment-box">
+                            <div class="payment-option">
+                                <label>
+                                    <input type="radio" name="metodo_pago" value="pago_en_cis" checked>
+                                    <span>Pago al reclamar en el CIS / Parque Cajasan</span>
+                                </label>
+                                <p>Reservas tu kit ahora y pagas en el punto de entrega seleccionado con tu documento de identidad.</p>
+                            </div>
+                            <div class="payment-option disabled">
+                                <label>
+                                    <input type="radio" name="metodo_pago" value="pago_en_linea" disabled>
+                                    <span>Pago en línea <small>(próximamente)</small></span>
+                                </label>
+                            </div>
+                            <div class="form-check form-check-terms">
+                                <label>
+                                    <input type="checkbox" id="acepta-terminos" name="acepta_terminos" required>
+                                    <span>He leído y acepto los <a href="#" target="_blank">términos y condiciones</a> y la <a href="#" target="_blank">política de tratamiento de datos</a> de Cajasan <abbr title="obligatorio">*</abbr></span>
+                                </label>
+                            </div>
+                            <div class="form-error" id="form-error" hidden></div>
+                            <button type="submit" class="btn-dark btn-lg" id="btn-realizar-pedido">
+                                Realizar pedido
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- Confirmación -->
+            <div class="checkout-success" id="checkout-success" hidden>
+                <div class="success-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"/>
+                    </svg>
+                </div>
+                <h2>¡Pedido recibido!</h2>
+                <p>Tu número de pedido es <strong id="success-numero">—</strong>.</p>
+                <p>Te enviamos la confirmación a <strong id="success-email">—</strong>. Recuerda reclamarlo en <strong id="success-punto">—</strong> antes del <strong>28 de febrero</strong>.</p>
+                <div class="success-actions">
+                    <a href="index.html#productos" class="btn-outline">Seguir comprando</a>
+                    <button type="button" class="btn-principal" onclick="window.print()">Imprimir comprobante</button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- ========== FOOTER ========== -->
+    <footer class="footer" id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Cajasan</h4>
+                    <p>Caja de Compensación Familiar de Santander. Más de 60 años de servicio a la comunidad.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces Rápidos</h4>
+                    <ul>
+                        <li><a href="index.html#inicio">Inicio</a></li>
+                        <li><a href="index.html#requisitos">Requisitos</a></li>
+                        <li><a href="index.html#categorias">Categorías</a></li>
+                        <li><a href="index.html#productos">Productos</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Ayuda</h4>
+                    <ul>
+                        <li><a href="index.html#requisitos">¿Cómo participar?</a></li>
+                        <li><a href="index.html#productos">Catálogo de productos</a></li>
+                        <li><a href="https://www.cajasan.com" target="_blank" rel="noopener noreferrer">Sitio principal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p>Celular: +57 300 910 94 14</p>
+                    <p>Carrera 27 No. 61 - 78, Bucaramanga</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Cajasan. Todos los derechos reservados. | Vigilado Supersubsidio | *Aplican condiciones y restricciones.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="assets/js/checkout.js"></script>
+</body>
+</html>

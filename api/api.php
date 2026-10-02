@@ -1,287 +1,378 @@
 <?php
 // api/api.php
 
-// Configurar headers
+// ============================================================
+//  HEADERS
+// ============================================================
 header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Mostrar errores en desarrollo
-ini_set('display_errors', 1);
+// Preflight CORS
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(204);
+    exit;
+}
+
+// ============================================================
+//  ERRORES
+//  display_errors en 0 para que los warnings de PHP nunca
+//  "ensucien" el JSON; todo queda en api/error.log
+// ============================================================
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/error.log');
 error_reporting(E_ALL);
 
-// Log de errores
-ini_set('error_log', __DIR__ . '/error.log');
+define('API_DEBUG', true); // Cambiar a false en producción
 
+// ============================================================
+//  HELPERS
+// ============================================================
+
+/** Responde JSON y termina. */
+function responder(array $payload, int $codigo = 200) {
+    http_response_code($codigo);
+    echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+function ok($data = null, string $message = null, array $extra = []) {
+    $res = ['success' => true];
+    if ($data !== null)    $res['data']    = $data;
+    if ($message !== null) $res['message'] = $message;
+    responder(array_merge($res, $extra));
+}
+
+function fallo(string $message, int $codigo = 400, array $extra = []) {
+    responder(array_merge(['success' => false, 'message' => $message, 'error' => $message], $extra), $codigo);
+}
+
+/** Lee el body JSON. Lanza excepción si no es válido. */
+function leerJson(bool $obligatorio = true): array {
+    $raw  = file_get_contents('php://input');
+    $data = json_decode($raw, true);
+    if (!is_array($data)) {
+        if ($obligatorio) throw new InvalidArgumentException('Cuerpo de la petición inválido (se esperaba JSON).');
+        return [];
+    }
+    return $data;
+}
+
+/** Exige que la petición sea de cierto método (o varios). */
+function requiereMetodo(string ...$permitidos) {
+    if (!in_array($_SERVER['REQUEST_METHOD'], $permitidos, true)) {
+        fallo('Método no permitido. Usa: ' . implode(', ', $permitidos), 405);
+    }
+}
+
+/** Exige claves en el array de datos. */
+function requiereCampos(array $data, array $campos) {
+    foreach ($campos as $c) {
+        if (!isset($data[$c]) || $data[$c] === '') {
+            throw new InvalidArgumentException("El campo '$c' es obligatorio.");
+        }
+    }
+}
+
+// ============================================================
+//  BOOTSTRAP
+// ============================================================
 try {
-    // Incluir archivos
     $config_path = __DIR__ . '/../config/database.php';
-    $model_path = __DIR__ . '/../models/Model.php';
-    
-    if (!file_exists($config_path)) {
-        throw new Exception("Archivo de configuración no encontrado: $config_path");
-    }
-    
-    if (!file_exists($model_path)) {
-        throw new Exception("Archivo de modelo no encontrado: $model_path");
-    }
-    
+    $model_path  = __DIR__ . '/../models/Model.php';
+
+    if (!file_exists($config_path)) throw new RuntimeException("Archivo de configuración no encontrado: $config_path");
+    if (!file_exists($model_path))  throw new RuntimeException("Archivo de modelo no encontrado: $model_path");
+
     require_once $config_path;
     require_once $model_path;
-    
-    // Verificar conexión
-    if (!isset($conexion)) {
-        throw new Exception("Conexión a base de datos no establecida");
-    }
-    
-    $model = new Model();
+
+    if (!isset($conexion)) throw new RuntimeException('Conexión a base de datos no establecida');
+
+    $model  = new Model();
     $metodo = $_SERVER['REQUEST_METHOD'];
-    $accion = isset($_GET['accion']) ? $_GET['accion'] : '';
-    
-    if (empty($accion)) {
-        throw new Exception("Acción no especificada");
-    }
-    
+    $accion = $_GET['accion'] ?? '';
+
+    if ($accion === '') fallo('Acción no especificada', 400);
+
     switch ($accion) {
-        
-        // ========== CATEGORÍAS ==========
+
+        // ========================================================
+        //  CATEGORÍAS
+        // ========================================================
         case 'obtenerCategorias':
-            $categorias = $model->obtenerCategorias();
-            echo json_encode(['success' => true, 'data' => $categorias ?: []]);
+            ok($model->obtenerCategorias() ?: []);
             break;
-        
+
+        case 'obtenerCategoriaPorId':
+            $id = intval($_GET['id'] ?? 0);
+            if ($id <= 0) fallo('ID de categoría inválido');
+            ok($model->obtenerCategoriaPorId($id));
+            break;
+
         case 'crearCategoria':
-            if ($metodo === 'POST') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['nombre'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $resultado = $model->crearCategoria($data['nombre'], $data['descripcion'] ?? '', $data['imagen'] ?? '');
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Categoría creada' : 'Error al crear']);
-            }
+            requiereMetodo('POST');
+            $data = leerJson();
+            requiereCampos($data, ['nombre']);
+            $r = $model->crearCategoria($data['nombre'], $data['descripcion'] ?? '', $data['imagen'] ?? '');
+            $r ? ok(null, 'Categoría creada') : fallo('Error al crear la categoría', 500);
             break;
-        
+
         case 'actualizarCategoria':
-            if ($metodo === 'PUT') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['id'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $resultado = $model->actualizarCategoria($data['id'], $data['nombre'], $data['descripcion'], $data['imagen']);
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Categoría actualizada' : 'Error al actualizar']);
-            }
+            requiereMetodo('PUT', 'POST');
+            $data = leerJson();
+            requiereCampos($data, ['id', 'nombre']);
+            $r = $model->actualizarCategoria($data['id'], $data['nombre'], $data['descripcion'] ?? '', $data['imagen'] ?? '');
+            $r ? ok(null, 'Categoría actualizada') : fallo('Error al actualizar la categoría', 500);
             break;
-        
+
         case 'eliminarCategoria':
-            if ($metodo === 'DELETE') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['id'])) {
-                    throw new Exception("ID no especificado");
-                }
-                $resultado = $model->eliminarCategoria($data['id']);
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Categoría eliminada' : 'Error al eliminar']);
-            }
+            requiereMetodo('DELETE', 'POST');
+            $data = leerJson();
+            requiereCampos($data, ['id']);
+            $r = $model->eliminarCategoria($data['id']);
+            $r ? ok(null, 'Categoría eliminada') : fallo('Error al eliminar la categoría', 500);
             break;
-        
-        // ========== MARCAS ==========
+
+        // ========================================================
+        //  MARCAS
+        // ========================================================
         case 'obtenerMarcas':
-            $marcas = $model->obtenerMarcas();
-            echo json_encode(['success' => true, 'data' => $marcas ?: []]);
+            ok($model->obtenerMarcas() ?: []);
             break;
-        
+
         case 'crearMarca':
-            if ($metodo === 'POST') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['nombre'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $resultado = $model->crearMarca($data['nombre'], $data['descripcion'] ?? '', $data['logo'] ?? '');
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Marca creada' : 'Error al crear']);
-            }
+            requiereMetodo('POST');
+            $data = leerJson();
+            requiereCampos($data, ['nombre']);
+            $r = $model->crearMarca($data['nombre'], $data['descripcion'] ?? '', $data['logo'] ?? '');
+            $r ? ok(null, 'Marca creada') : fallo('Error al crear la marca', 500);
             break;
-        
-        // ========== PRODUCTOS ==========
+
+        // ========================================================
+        //  PRODUCTOS
+        // ========================================================
         case 'obtenerProductos':
-            $categoria_id = isset($_GET['categoria_id']) ? intval($_GET['categoria_id']) : null;
-            $marca_id = isset($_GET['marca_id']) ? intval($_GET['marca_id']) : null;
-            $productos = $model->obtenerProductos($categoria_id, $marca_id);
-            echo json_encode(['success' => true, 'data' => $productos ?: []]);
+            $categoria_id = !empty($_GET['categoria_id']) ? intval($_GET['categoria_id']) : null;
+            $marca_id     = !empty($_GET['marca_id'])     ? intval($_GET['marca_id'])     : null;
+            ok($model->obtenerProductos($categoria_id, $marca_id) ?: []);
             break;
-        
+
         case 'obtenerProductoPorId':
-            $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-            if ($id <= 0) {
-                throw new Exception("ID de producto inválido");
-            }
+            $id = intval($_GET['id'] ?? 0);
+            if ($id <= 0) fallo('ID de producto inválido');
             $producto = $model->obtenerProductoPorId($id);
-            $imagenes = $model->obtenerImagenesProducto($id);
-            echo json_encode(['success' => true, 'data' => $producto, 'imagenes' => $imagenes ?: []]);
+            if (!$producto) fallo('Producto no encontrado', 404);
+            ok($producto, null, ['imagenes' => $model->obtenerImagenesProducto($id) ?: []]);
             break;
-        
+
         case 'crearProducto':
-            if ($metodo === 'POST') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['nombre'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $id = $model->crearProducto(
-                    $data['nombre'],
-                    $data['descripcion'] ?? '',
-                    $data['precio'] ?? 0,
-                    $data['descuento'] ?? 0,
-                    $data['stock'] ?? 0,
-                    $data['categoria_id'] ?? 0,
-                    $data['marca_id'] ?? 0
-                );
-                echo json_encode(['success' => $id ? true : false, 'id' => $id, 'message' => $id ? 'Producto creado' : 'Error al crear']);
-            }
+            requiereMetodo('POST');
+            $data = leerJson();
+            requiereCampos($data, ['nombre']);
+            $id = $model->crearProducto(
+                $data['nombre'],
+                $data['descripcion'] ?? '',
+                (float) ($data['precio'] ?? 0),
+                (float) ($data['descuento'] ?? 0),
+                (int)   ($data['stock'] ?? 0),
+                (int)   ($data['categoria_id'] ?? 0),
+                (int)   ($data['marca_id'] ?? 0)
+            );
+            $id ? ok(null, 'Producto creado', ['id' => $id]) : fallo('Error al crear el producto', 500);
             break;
-        
+
         case 'actualizarProducto':
-            if ($metodo === 'PUT') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['id'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $resultado = $model->actualizarProducto(
-                    $data['id'],
-                    $data['nombre'],
-                    $data['descripcion'],
-                    $data['precio'],
-                    $data['descuento'],
-                    $data['stock'],
-                    $data['categoria_id'],
-                    $data['marca_id']
-                );
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Producto actualizado' : 'Error al actualizar']);
-            }
+            requiereMetodo('PUT', 'POST');
+            $data = leerJson();
+            requiereCampos($data, ['id', 'nombre']);
+            $r = $model->actualizarProducto(
+                (int)   $data['id'],
+                $data['nombre'],
+                $data['descripcion'] ?? '',
+                (float) ($data['precio'] ?? 0),
+                (float) ($data['descuento'] ?? 0),
+                (int)   ($data['stock'] ?? 0),
+                (int)   ($data['categoria_id'] ?? 0),
+                (int)   ($data['marca_id'] ?? 0)
+            );
+            $r ? ok(null, 'Producto actualizado') : fallo('Error al actualizar el producto', 500);
             break;
-        
+
         case 'eliminarProducto':
-            if ($metodo === 'DELETE') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['id'])) {
-                    throw new Exception("ID no especificado");
-                }
-                $resultado = $model->eliminarProducto($data['id']);
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Producto eliminado' : 'Error al eliminar']);
-            }
+            requiereMetodo('DELETE', 'POST');
+            $data = leerJson();
+            requiereCampos($data, ['id']);
+            $r = $model->eliminarProducto($data['id']);
+            $r ? ok(null, 'Producto eliminado') : fallo('Error al eliminar el producto', 500);
             break;
-        
-        // ========== IMÁGENES ==========
+
+        // ========================================================
+        //  IMÁGENES
+        // ========================================================
         case 'obtenerImagenesProducto':
-            $producto_id = isset($_GET['producto_id']) ? intval($_GET['producto_id']) : 0;
-            if ($producto_id <= 0) {
-                throw new Exception("ID de producto inválido");
-            }
-            $imagenes = $model->obtenerImagenesProducto($producto_id);
-            echo json_encode(['success' => true, 'data' => $imagenes ?: []]);
+            $producto_id = intval($_GET['producto_id'] ?? 0);
+            if ($producto_id <= 0) fallo('ID de producto inválido');
+            ok($model->obtenerImagenesProducto($producto_id) ?: []);
             break;
-        
+
         case 'agregarImagenProducto':
-            if ($metodo === 'POST') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['producto_id'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $resultado = $model->agregarImagenProducto(
-                    $data['producto_id'],
-                    $data['url_imagen'] ?? '',
-                    $data['es_principal'] ?? false
-                );
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Imagen agregada' : 'Error al agregar']);
-            }
+            requiereMetodo('POST');
+            $data = leerJson();
+            requiereCampos($data, ['producto_id', 'url_imagen']);
+            $r = $model->agregarImagenProducto($data['producto_id'], $data['url_imagen'], !empty($data['es_principal']));
+            $r ? ok(null, 'Imagen agregada') : fallo('Error al agregar la imagen', 500);
             break;
-        
-        // ========== USUARIOS ==========
+
+        // ========================================================
+        //  USUARIOS
+        // ========================================================
         case 'obtenerUsuarios':
-            $usuarios = $model->obtenerUsuarios();
-            echo json_encode(['success' => true, 'data' => $usuarios ?: []]);
+            ok($model->obtenerUsuarios() ?: []);
             break;
-        
+
         case 'verificarUsuario':
-            if ($metodo === 'POST') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['email']) || !isset($data['contraseña'])) {
-                    throw new Exception("Email o contraseña no especificados");
-                }
-                $usuario = $model->verificarUsuario($data['email'], $data['contraseña']);
-                if ($usuario) {
-                    echo json_encode(['success' => true, 'data' => $usuario]);
-                } else {
-                    echo json_encode(['success' => false, 'message' => 'Credenciales inválidas']);
-                }
+            requiereMetodo('POST');
+            $data = leerJson();
+            // Acepta "contraseña" (como envía app.js/checkout.js) o "password"
+            $pass = $data['contraseña'] ?? $data['password'] ?? null;
+            if (empty($data['email']) || $pass === null || $pass === '') {
+                fallo('Email o contraseña no especificados');
             }
+            $usuario = $model->verificarUsuario(strtolower(trim($data['email'])), $pass);
+            $usuario ? ok($usuario) : fallo('Credenciales inválidas', 401);
             break;
-        
+
         case 'crearUsuario':
-            if ($metodo === 'POST') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['nombre']) || !isset($data['email'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $resultado = $model->crearUsuario(
-                    $data['nombre'],
-                    $data['email'],
-                    $data['contraseña'] ?? '',
-                    $data['rol'] ?? 'cliente'
-                );
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Usuario creado' : 'Error al crear']);
-            }
+            requiereMetodo('POST');
+            $data = leerJson();
+            requiereCampos($data, ['nombre', 'email']);
+            $email = strtolower(trim($data['email']));
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) fallo('Correo electrónico inválido');
+            if ($model->obtenerUsuarioPorEmail($email)) fallo('Ya existe un usuario con ese correo', 409);
+
+            $id = $model->crearUsuario(
+                trim($data['nombre']),
+                $email,
+                $data['contraseña'] ?? $data['password'] ?? null,
+                $data['rol'] ?? 'cliente'
+            );
+            $id ? ok(['id' => $id], 'Usuario creado') : fallo('Error al crear el usuario', 500);
             break;
-        
-        // ========== CARRITO ==========
+
+        // ========================================================
+        //  CARRITO (persistente en BD, opcional)
+        // ========================================================
         case 'agregarAlCarrito':
-            if ($metodo === 'POST') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['usuario_id']) || !isset($data['producto_id'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $resultado = $model->agregarAlCarrito(
-                    $data['usuario_id'],
-                    $data['producto_id'],
-                    $data['cantidad'] ?? 1
-                );
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Agregado al carrito' : 'Error']);
-            }
+            requiereMetodo('POST');
+            $data = leerJson();
+            requiereCampos($data, ['usuario_id', 'producto_id']);
+            $r = $model->agregarAlCarrito((int) $data['usuario_id'], (int) $data['producto_id'], (int) ($data['cantidad'] ?? 1));
+            $r ? ok(null, 'Agregado al carrito') : fallo('Error al agregar al carrito', 500);
             break;
-        
+
         case 'obtenerCarrito':
-            $usuario_id = isset($_GET['usuario_id']) ? intval($_GET['usuario_id']) : 0;
-            if ($usuario_id <= 0) {
-                throw new Exception("ID de usuario inválido");
-            }
-            $carrito = $model->obtenerCarrito($usuario_id);
-            echo json_encode(['success' => true, 'data' => $carrito ?: []]);
+            $usuario_id = intval($_GET['usuario_id'] ?? 0);
+            if ($usuario_id <= 0) fallo('ID de usuario inválido');
+            ok($model->obtenerCarrito($usuario_id) ?: []);
             break;
-        
+
         case 'eliminarDelCarrito':
-            if ($metodo === 'DELETE') {
-                $data = json_decode(file_get_contents("php://input"), true);
-                if (!$data || !isset($data['usuario_id']) || !isset($data['producto_id'])) {
-                    throw new Exception("Datos inválidos");
-                }
-                $resultado = $model->eliminarDelCarrito($data['usuario_id'], $data['producto_id']);
-                echo json_encode(['success' => $resultado, 'message' => $resultado ? 'Eliminado del carrito' : 'Error']);
-            }
+            requiereMetodo('DELETE', 'POST');
+            $data = leerJson();
+            requiereCampos($data, ['usuario_id', 'producto_id']);
+            $r = $model->eliminarDelCarrito((int) $data['usuario_id'], (int) $data['producto_id']);
+            $r ? ok(null, 'Eliminado del carrito') : fallo('Error al eliminar del carrito', 500);
             break;
-        
+
+        case 'vaciarCarrito':
+            requiereMetodo('DELETE', 'POST');
+            $data = leerJson();
+            requiereCampos($data, ['usuario_id']);
+            $r = $model->vaciarCarrito((int) $data['usuario_id']);
+            $r ? ok(null, 'Carrito vaciado') : fallo('Error al vaciar el carrito', 500);
+            break;
+
+        // ========================================================
+        //  PEDIDOS (checkout)
+        // ========================================================
+
+        /**
+         * POST api.php?accion=crearPedido
+         * Body: JSON que envía checkout.js
+         * Respuesta: { success, data: { pedido_id, numero_pedido, usuario_id, total } }
+         */
+        case 'crearPedido':
+            requiereMetodo('POST');
+            $data = leerJson();
+            requiereCampos($data, ['nombre_completo', 'documento', 'telefono', 'email', 'punto_entrega', 'items']);
+
+            if (!is_array($data['items']) || count($data['items']) === 0) {
+                fallo('El pedido no tiene productos.');
+            }
+
+            // crearPedido valida stock, recalcula precios y hace la transacción.
+            // Si algo falla lanza Exception con mensaje legible → se captura abajo como 400.
+            $resultado = $model->crearPedido($data);
+            ok($resultado, 'Pedido registrado correctamente', ['codigo' => 201]);
+            break;
+
+        /** GET api.php?accion=obtenerPedido&id=12 */
+        case 'obtenerPedido':
+            $id = intval($_GET['id'] ?? 0);
+            if ($id <= 0) fallo('ID de pedido inválido');
+            $pedido = $model->obtenerPedido($id);
+            $pedido ? ok($pedido) : fallo('Pedido no encontrado', 404);
+            break;
+
+        /** GET api.php?accion=obtenerPedidosPorUsuario&usuario_id=3 */
+        case 'obtenerPedidosPorUsuario':
+            $usuario_id = intval($_GET['usuario_id'] ?? 0);
+            if ($usuario_id <= 0) fallo('ID de usuario inválido');
+            ok($model->obtenerPedidosPorUsuario($usuario_id) ?: []);
+            break;
+
+        /** GET api.php?accion=obtenerPedidos[&estado=pendiente]  (admin) */
+        case 'obtenerPedidos':
+            $estado = !empty($_GET['estado']) ? $_GET['estado'] : null;
+            ok($model->obtenerPedidos($estado) ?: []);
+            break;
+
+        /** PUT/POST api.php?accion=actualizarEstadoPedido  Body: { id, estado }  (admin) */
+        case 'actualizarEstadoPedido':
+            requiereMetodo('PUT', 'POST');
+            $data = leerJson();
+            requiereCampos($data, ['id', 'estado']);
+            $r = $model->actualizarEstadoPedido((int) $data['id'], $data['estado']);
+            $r ? ok(null, 'Estado del pedido actualizado') : fallo('Error al actualizar el estado', 500);
+            break;
+
+        // ========================================================
         default:
-            throw new Exception("Acción no reconocida: " . $accion);
+            fallo('Acción no reconocida: ' . $accion, 404);
     }
-    
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'error' => $e->getMessage(),
-        'file' => $e->getFile(),
-        'line' => $e->getLine()
-    ]);
-    
-    // Log del error
-    error_log("Error en API: " . $e->getMessage() . " en " . $e->getFile() . ":" . $e->getLine());
+
+} catch (InvalidArgumentException $e) {
+    // Datos del cliente incorrectos → 400
+    fallo($e->getMessage(), 400);
+
+} catch (mysqli_sql_exception $e) {
+    // Error de base de datos → 500 (detalle solo en modo debug)
+    error_log("Error SQL en API [$accion]: " . $e->getMessage());
+    fallo(
+        'Error en la base de datos.',
+        500,
+        API_DEBUG ? ['detalle' => $e->getMessage(), 'line' => $e->getLine()] : []
+    );
+
+} catch (Throwable $e) {
+    // Excepciones del modelo (p. ej. "Stock insuficiente…") → 400 con el mensaje tal cual
+    error_log("Error en API [$accion]: " . $e->getMessage() . ' en ' . $e->getFile() . ':' . $e->getLine());
+    fallo(
+        $e->getMessage(),
+        400,
+        API_DEBUG ? ['file' => $e->getFile(), 'line' => $e->getLine()] : []
+    );
 }
-?>
